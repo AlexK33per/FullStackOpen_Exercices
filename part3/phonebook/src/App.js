@@ -4,9 +4,11 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import ContactList from "./components/ContactList";
 import axios from "axios";
+import OkAlert from "./components/OkAlert";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
+  const [person, setPerson] = useState({ name: "", number: "" });
   const [newName, setNewName] = useState("");
   const [newNumber, setNumber] = useState("");
   const [filter, setFilter] = useState("");
@@ -21,6 +23,7 @@ const App = () => {
 
   const handleNewName = (event) => {
     setNewName(event.target.value);
+    setPerson({name: '', number: ''})
   };
 
   const handleNewNumber = (event) => {
@@ -33,9 +36,13 @@ const App = () => {
 
   const addNewContact = (event) => {
     event.preventDefault();
-    persons.some(person => person.name === newName)
-    ? window.alert(`${newName} is already added to phonebook`)
-    : setPersons(persons.concat({ name: newName, number: newNumber }));
+    if(persons.some(person => person.name === newName)) {
+      window.alert(`${newName} is already added to phonebook`)
+    } else {
+      const newPerson = { name: newName, number: newNumber }
+      setPerson(newPerson)
+      setPersons(persons.concat(newPerson));
+    }
     setNewName("");
     setNumber("");
   }
@@ -44,6 +51,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
       <form>
+        <OkAlert person={person} />
         <Filter value={filter} handler={handleFilter} />
         <PersonForm values={[newName, newNumber]} handlers={[handleNewName, handleNewNumber]} />
         <Button handler={addNewContact} />
